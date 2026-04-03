@@ -43,6 +43,7 @@ router.get('/mes-produits', auth, async (req, res) => {
         );
         res.status(200).json(results);
     } catch (err) {
+        console.error("DÉTAIL ERREUR SQL :", err.sqlMessage);
         res.status(500).json({ message: 'Erreur serveur', erreur: err.message });
     }
 });
