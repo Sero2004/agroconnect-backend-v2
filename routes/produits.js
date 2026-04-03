@@ -14,6 +14,14 @@ router.get('/', async (req, res) => {
         );
         res.status(200).json(results);
     } catch (err) {
+        console.error("DÉTAIL COMPLET DE L'ERREUR :", err);
+        
+        res.status(500).json({ 
+            success: false,
+            message: 'Erreur technique sur le serveur', 
+            erreur_precise: err.sqlMessage || err.message, // Ceci s'affichera sur votre écran
+            code_erreur: err.code // Exemple: 'ER_NO_SUCH_TABLE'
+        });
         res.status(500).json({ message: 'Erreur serveur', erreur: err.message });
     }
 });
@@ -30,6 +38,14 @@ router.post('/', auth, async (req, res) => {
         );
         res.status(201).json({ message: "Produit publié ✅" });
     } catch (err) {
+        console.error("DÉTAIL COMPLET DE L'ERREUR :", err);
+        
+        res.status(500).json({ 
+            success: false,
+            message: 'Erreur technique sur le serveur', 
+            erreur_precise: err.sqlMessage || err.message, // Ceci s'affichera sur votre écran
+            code_erreur: err.code // Exemple: 'ER_NO_SUCH_TABLE'
+        });
         res.status(500).json({ message: 'Erreur serveur', erreur: err.message });
     }
 });
@@ -43,7 +59,14 @@ router.get('/mes-produits', auth, async (req, res) => {
         );
         res.status(200).json(results);
     } catch (err) {
-        console.error("DÉTAIL ERREUR SQL :", err.sqlMessage);
+        onsole.error("DÉTAIL COMPLET DE L'ERREUR :", err);
+        
+        res.status(500).json({ 
+            success: false,
+            message: 'Erreur technique sur le serveur', 
+            erreur_precise: err.sqlMessage || err.message, // Ceci s'affichera sur votre écran
+            code_erreur: err.code // Exemple: 'ER_NO_SUCH_TABLE'
+        });
         res.status(500).json({ message: 'Erreur serveur', erreur: err.message });
     }
 });
