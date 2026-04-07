@@ -1,31 +1,37 @@
 const express = require('express');
 const router = express.Router();
-const { FedaPay, Transaction } = require('fedapay');
+// IMPORTATION SIMPLIFIÉE
+const FedaPay = require('fedapay').FedaPay;
+const Transaction = require('fedapay').Transaction;
 const auth = require('../middleware/auth');
-const db = require('../config/db'); // On importe la DB pour enregistrer les paiements
+const db = require('../config/db');
 
 // Configuration FedaPay
 FedaPay.setApiKey(process.env.FEDAPAY_SECRET_KEY);
 FedaPay.setEnvironment('sandbox'); 
 
-// 1. ROUTE POUR CRÉER LE LIEN DE PAIEMENT
 router.post('/creer', auth, async (req, res) => {
-    const { montant, produit_id, email_client, nom_client } = req.body;
+    // 1. FORCER LE MONTANT EN ENTIER (Trés important pour FedaPay)
+    const montant = parseInt(req.body.montant);
+    const { produit_id, email_client, nom_client } = req.body;
 
     try {
+        // 2. UTILISATION DE LA MÉTHODE STATIQUE CORRECTE
         const transaction = await Transaction.create({
             amount: montant,
             description: `Achat produit #${produit_id} sur AgroConnect`,
             currency: { iso: 'XOF' },
+            callback_url: 'https://agroconnect-frontend-ten.vercel.app/paiement-succes', // Recommandé d'ajouter ceci
             customer: {
-                firstname: nom_client,
+                firstname: nom_client || "Client", 
+                lastname: "AgroConnect", // FedaPay aime avoir les deux
                 email: email_client
             }
         });
 
         const token = await transaction.generateToken();
 
-        // OPTIONNEL : Enregistrer la commande en 'pending' (en attente)
+        // 3. ENREGISTREMENT DB (Vérifie que ta table 'commandes' existe bien)
         await db.query(
             'INSERT INTO commandes (fedapay_id, montant, statut, produit_id, user_id) VALUES (?, ?, ?, ?, ?)',
             [transaction.id, montant, 'pending', produit_id, req.user.id]
@@ -36,7 +42,9 @@ router.post('/creer', auth, async (req, res) => {
             transaction_id: transaction.id 
         });
     } catch (err) {
-        res.status(500).json({ message: "Erreur FedaPay", error: err.message });
+        // Afficher l'erreur réelle dans la console Render pour débugger
+        console.error("Détail Erreur FedaPay:", err.message);
+        res.status(400).json({ message: "Erreur FedaPay", error: err.message });
     }
 });
 
