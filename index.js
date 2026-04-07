@@ -6,6 +6,7 @@ const db = require('./config/db');
 const authRoutes = require('./routes/auth');
 const produitsRoutes = require('./routes/produits');
 const adminRoutes = require('./routes/admin');
+const paiementRoutes = require('./routes/paiement');
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/produits', produitsRoutes); 
 app.use('/api/admin', adminRoutes);
+app.use('/api/paiement', paiementRoutes);
 
 // Route de test
 app.get('/', (req, res) => {
