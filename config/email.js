@@ -1,19 +1,21 @@
-const nodemailer = require('nodemailer')
-require('dotenv').config()
+const nodemailer = require('nodemailer');
+require('dotenv').config();
 
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp-relay.brevo.com',
+    port: 587,
+    secure: false,
     auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
+        user: process.env.BREVO_SMTP_USER,  // ← ici
+        pass: process.env.BREVO_SMTP_PASS   // ← et ici
     }
-})
+});
 
 const envoyerEmailVerification = async (email, nom, token) => {
-    const lien = `https://agroconnect-backend-djtm.onrender.com/api/auth/verifier-email?token=${token}`
+    const lien = `https://agroconnect-backend-djtm.onrender.com/api/auth/verifier-email?token=${token}`;
 
     await transporter.sendMail({
-        from: `"AgroConnect Bénin 🌱" <${process.env.EMAIL_USER}>`,
+        from: `"AgroConnect Bénin 🌱" <a77a0f001@smtp-brevo.com>`,
         to: email,
         subject: '✅ Confirmez votre adresse email — AgroConnect Bénin',
         html: `
@@ -42,7 +44,7 @@ const envoyerEmailVerification = async (email, nom, token) => {
                 </div>
             </div>
         `
-    })
-}
+    });
+};
 
-module.exports = { envoyerEmailVerification }
+module.exports = { envoyerEmailVerification };
