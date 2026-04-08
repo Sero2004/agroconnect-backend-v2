@@ -27,7 +27,7 @@ router.post('/inscription', async (req, res) => {
 
         // 4. Envoyer email de vérification (on ne bloque pas si l'envoi échoue)
         try {
-            await envoyerEmailVerification(email, nom, token);
+            envoyerEmailVerification(email, nom, token);
         } catch (emailErr) {
             console.error('Erreur envoi email:', emailErr);
         }
