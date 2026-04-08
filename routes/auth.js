@@ -25,16 +25,17 @@ router.post('/inscription', async (req, res) => {
             [nom, prenoms, email, hash, role, telephone, ville, token]
         );
 
-        // 4. Envoyer email de vérification (on ne bloque pas si l'envoi échoue)
+        // 4. Répondre IMMÉDIATEMENT au frontend
+        res.status(201).json({ 
+            message: 'Inscription réussie ✅ Vérifiez votre email pour activer votre compte.' 
+        });
+
+        // 5. Envoyer email de vérification (on ne bloque pas si l'envoi échoue)
         try {
             envoyerEmailVerification(email, nom, token);
         } catch (emailErr) {
             console.error('Erreur envoi email:', emailErr);
         }
-
-        res.status(201).json({ 
-            message: 'Inscription réussie ✅ Vérifiez votre email pour activer votre compte.' 
-        });
 
     } catch (err) {
         res.status(500).json({ message: 'Erreur serveur', erreur: err.message });
