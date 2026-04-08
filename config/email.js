@@ -1,10 +1,10 @@
-const Brevo = require('@getbrevo/brevo');
+const { TransactionalEmailsApi, SendSmtpEmail, ApiClient } = require('@getbrevo/brevo');
 require('dotenv').config();
 
-const defaultClient = Brevo.ApiClient.instance;
-defaultClient.authentications['api-key'].apiKey = process.env.BREVO_API_KEY;
+const apiClient = ApiClient.instance;
+apiClient.authentications['api-key'].apiKey = process.env.BREVO_API_KEY;
 
-const apiInstance = new Brevo.TransactionalEmailsApi();
+const apiInstance = new TransactionalEmailsApi();
 
 const envoyerEmailVerification = async (email, nom, token) => {
     const lien = `https://agroconnect-backend-djtm.onrender.com/api/auth/verifier-email?token=${token}`;
