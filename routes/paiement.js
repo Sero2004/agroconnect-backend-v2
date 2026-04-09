@@ -23,8 +23,8 @@ router.post('/creer', auth, async (req, res) => {
             currency: { iso: 'XOF' },
             callback_url: 'https://agroconnect-frontend-ten.vercel.app/paiement-succes', // Recommandé d'ajouter ceci
             customer: {
-                firstname: nom_client || "Client", 
-                lastname: "AgroConnect", // FedaPay aime avoir les deux
+                firstname: prenom_client || "Client", 
+                lastname: nom_client || "AgroConnect", // FedaPay aime avoir les deux
                 email: email_client
             }
         });
