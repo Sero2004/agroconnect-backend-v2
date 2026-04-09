@@ -14,14 +14,14 @@ router.post('/creer', auth, async (req, res) => {
     // 1. FORCER LE MONTANT EN ENTIER (Trés important pour FedaPay)
     console.log("Body reçu:", req.body);
     const montant = parseInt(req.body.montant);
-    const { produit_nom, email_client, nom_client, prenom_client } = req.body;
+    const { produit_id, email_client, nom_client, prenom_client } = req.body;
     console.log("prenom_client:", prenom_client);
 
     try {
         // 2. UTILISATION DE LA MÉTHODE STATIQUE CORRECTE
         const transaction = await Transaction.create({
             amount: montant,
-            description: `Achat produit #${produit_nom} sur AgroConnect`,
+            description: `Achat produit #${produit_id} sur AgroConnect`,
             currency: { iso: 'XOF' },
             callback_url: 'https://agroconnect-frontend-ten.vercel.app/paiement-succes', // Recommandé d'ajouter ceci
             customer: {
@@ -35,7 +35,7 @@ router.post('/creer', auth, async (req, res) => {
 
         // 3. ENREGISTREMENT DB (Vérifie que ta table 'commandes' existe bien)
         await db.query(
-            'INSERT INTO commandes (fedapay_id, montant, statut, produit_id, user_id) VALUES (?, ?, ?, ?, ?)',
+            'INSERT INTO commandes (fedapay_id, montant, statut, produit_, user_id) VALUES (?, ?, ?, ?, ?)',
             [transaction.id, montant, 'pending', produit_id, req.user.id]
         );
 
