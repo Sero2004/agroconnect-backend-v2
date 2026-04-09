@@ -13,7 +13,7 @@ FedaPay.setEnvironment('sandbox');
 router.post('/creer', auth, async (req, res) => {
     // 1. FORCER LE MONTANT EN ENTIER (Trés important pour FedaPay)
     const montant = parseInt(req.body.montant);
-    const { produit_id, email_client, nom_client } = req.body;
+    const { produit_id, email_client, nom_client, prenom_client } = req.body;
 
     try {
         // 2. UTILISATION DE LA MÉTHODE STATIQUE CORRECTE
