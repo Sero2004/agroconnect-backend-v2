@@ -53,24 +53,22 @@ router.post('/creer', auth, async (req, res) => {
 // 2. LE WEBHOOK (L'URL que FedaPay appellera toute seule)
 // ATTENTION : Pas de middleware "auth" ici !
 router.post('/callback', async (req, res) => {
-    console.log("Webhook reçu:", JSON.stringify(req.body));
     const event = req.body;
 
     try {
-        // Si la transaction est approuvée par FedaPay
-        if (event.status === 'approved') {
-            const fedapayId = event.id;
+        if (event.name === 'transaction.approved') {
+    const fedapayId = event.entity.id;
+    console.log("fedapayId reçu:", fedapayId, typeof fedapayId); // ← ajoute
+    
+    const [result] = await db.query(
+        'UPDATE commandes SET statut = "approved" WHERE fedapay_id = ?',
+        [fedapayId]
+    );
+    console.log("Lignes modifiées:", result.affectedRows); // ← ajoute
+    
+    console.log(`💰 Paiement approuvé pour la transaction ${fedapayId}`);
+}
 
-            // On met à jour le statut dans notre base de données
-            await db.query(
-                'UPDATE commandes SET statut = "approved" WHERE fedapay_id = ?',
-                [fedapayId]
-            );
-
-            console.log(`💰 Paiement approuvé pour la transaction ${fedapayId}`);
-        }
-
-        // On répond 200 à FedaPay pour confirmer la réception
         res.sendStatus(200);
     } catch (err) {
         console.error("Erreur Webhook:", err.message);
