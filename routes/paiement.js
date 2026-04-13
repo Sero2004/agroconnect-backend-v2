@@ -21,7 +21,7 @@ router.post('/creer', auth, async (req, res) => {
         // 2. UTILISATION DE LA MÉTHODE STATIQUE CORRECTE
         const transaction = await Transaction.create({
             amount: montant,
-            description: `Achat produit #${produit_id} sur AgroConnect`,
+            description: `Achat produit #${produit_nom} sur AgroConnect`,
             currency: { iso: 'XOF' },
             callback_url: 'https://agroconnect-frontend-ten.vercel.app/paiement-succes', // Recommandé d'ajouter ceci
             customer: {
