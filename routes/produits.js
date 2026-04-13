@@ -8,9 +8,9 @@ router.get('/', async (req, res) => {
     try {
         const [results] = await db.query(
             `SELECT p.*, u.nom AS vendeur_nom, u.prenoms AS vendeur_prenoms, u.telephone AS vendeur_tel 
-             FROM produits p 
-             JOIN users u ON p.user_id = u.id 
-             ORDER BY p.created_at DESC`
+            FROM produits p 
+            JOIN users u ON p.user_id = u.id 
+            ORDER BY p.created_at DESC`
         );
         res.status(200).json(results);
     } catch (err) {
@@ -74,13 +74,25 @@ router.get('/mes-produits', auth, async (req, res) => {
 // Supprimer un produit
 router.delete('/:id', auth, async (req, res) => {
     try {
+        // 1. Détacher les commandes liées
+        await db.query(
+            'UPDATE commandes SET produit_id = NULL WHERE produit_id = ?',
+            [req.params.id]
+        );
+
+        // 2. Supprimer le produit
         const [result] = await db.query(
             'DELETE FROM produits WHERE id = ? AND user_id = ?',
             [req.params.id, req.user.id]
         );
-        if (result.affectedRows === 0) return res.status(404).json({ message: 'Produit non trouvé' });
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: 'Produit non trouvé' });
+        }
+
         res.status(200).json({ message: 'Produit supprimé ✅' });
     } catch (err) {
+        console.error("Erreur suppression:", err.message);
         res.status(500).json({ message: 'Erreur serveur', erreur: err.message });
     }
 });
