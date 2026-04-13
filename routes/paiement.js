@@ -35,7 +35,7 @@ router.post('/creer', auth, async (req, res) => {
 
         // 3. ENREGISTREMENT DB (Vérifie que ta table 'commandes' existe bien)
         await db.query(
-            'INSERT INTO commandes (fedapay_id, montant, statut, produit_, user_id) VALUES (?, ?, ?, ?, ?)',
+            'INSERT INTO commandes (fedapay_id, montant, statut, produit_id, user_id) VALUES (?, ?, ?, ?, ?)',
             [transaction.id, montant, 'pending', produit_id, req.user.id]
         );
 
