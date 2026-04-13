@@ -53,6 +53,7 @@ router.post('/creer', auth, async (req, res) => {
 // 2. LE WEBHOOK (L'URL que FedaPay appellera toute seule)
 // ATTENTION : Pas de middleware "auth" ici !
 router.post('/callback', async (req, res) => {
+    console.log("Webhook reçu:", JSON.stringify(req.body));
     const event = req.body;
 
     try {
