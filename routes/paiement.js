@@ -61,7 +61,7 @@ router.post('/callback', async (req, res) => {
     console.log("fedapayId reçu:", fedapayId, typeof fedapayId); // ← ajoute
     
     const [result] = await db.query(
-        'UPDATE commandes SET statut = "approved" WHERE fedapay_id = ?',
+        "UPDATE commandes SET statut = 'approved' WHERE fedapay_id = ?",
         [fedapayId]
     );
     console.log("Lignes modifiées:", result.affectedRows); // ← ajoute
